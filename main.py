@@ -1,5 +1,6 @@
 from crud import CRUD
-from models import Product, Client, Shop, Detail, BaseEntity
+from models import Product, Client, Shop, Detail
+from controller import Controller
 import tkinter as tk
 
 crud = CRUD("db_test")
@@ -17,16 +18,15 @@ main_frame.pack(side=tk.LEFT, expand=True, fill="both")
 main_frame.pack_propagate(False)
 main_frame.configure(height=1000, width=800)
 
-base = BaseEntity()
-
 crud.init_db()
 
-base.make_frame(Product(), "product", crud, option_frame, main_frame)
-base.make_frame(Client(), "client", crud, option_frame, main_frame)
-base.make_frame(Shop(), "shop", crud, option_frame, main_frame,
-                [[Client(), "client"]])
-base.make_frame(Detail(), "detail", crud, option_frame, main_frame,
-                [[Shop(), "shop"], [Product(), "product"]])
+controller = Controller()
 
+controller.make_frame(Product(), "product", crud, option_frame, main_frame)
+controller.make_frame(Client(), "client", crud, option_frame, main_frame)
+controller.make_frame(Shop(), "shop", crud, option_frame, main_frame,
+                      [[Client(), "client"]])
+controller.make_frame(Detail(), "detail", crud, option_frame, main_frame,
+                      [[Shop(), "shop"], [Product(), "product"]])
 
 root.mainloop()
