@@ -19,16 +19,13 @@ class Controller:
         for frame in cur_frame.winfo_children():
             frame.destroy()
 
-        model_frame = tk.Frame(cur_frame)
-        model_frame.pack(pady=20, expand=True, fill="both")
-
-        lb = tk.Label(model_frame, text=f"{column} Page", font=("Bold", 30))
+        lb = tk.Label(cur_frame, text=f"{column} Page", font=("Bold", 30))
         lb.pack()
 
-        opt_frame = tk.Frame(model_frame)
+        opt_frame = tk.Frame(cur_frame)
         opt_frame.pack()
 
-        form_frame = tk.Frame(model_frame)
+        form_frame = tk.Frame(cur_frame)
         form_frame.pack()
 
         btn_create = tk.Button(opt_frame, text="Create",

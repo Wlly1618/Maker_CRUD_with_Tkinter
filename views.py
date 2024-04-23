@@ -23,7 +23,7 @@ class Views:
 
         ok_button = tk.Button(modal, text="OK", command=modal.destroy)
         ok_button.pack()
-
+        
     @staticmethod
     def update_modal(id_, column):
         """
@@ -142,7 +142,7 @@ class Views:
         en_id = tk.Entry(cur_frame, textvariable=id_)
         en_id.pack()
 
-        btn_id = tk.Button(cur_frame, text="Search", command=lambda: get_data(id_))
+        btn_id = tk.Button(cur_frame, text="Search", command=lambda: get_data())
         btn_id.pack()
 
         show_frame = tk.Frame(cur_frame)
@@ -155,7 +155,7 @@ class Views:
             en = tk.Entry(cur_frame, textvariable=var)
             en.pack()
 
-        def get_data(_id):
+        def get_data():
             """
             :param _id: ID to search
             """
@@ -209,16 +209,15 @@ class Views:
         en_id = tk.Entry(cur_frame, textvariable=id_)
         en_id.pack()
 
-        btn_id = tk.Button(cur_frame, text="Search", command=lambda: get_data(id_))
+        btn_id = tk.Button(cur_frame, text="Search", command=lambda: get_data())
         btn_id.pack()
 
         show_frame = tk.Frame(cur_frame)
         show_frame.pack()
 
-        def get_data(_id):
+        def get_data():
             """
             To search data
-            :param _id: ID to search
             :return:
             """
             self.del_frame(show_frame)

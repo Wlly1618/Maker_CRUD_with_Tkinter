@@ -29,4 +29,6 @@ controller.make_frame(Shop(), "shop", crud, option_frame, main_frame,
 controller.make_frame(Detail(), "detail", crud, option_frame, main_frame,
                       [[Shop(), "shop"], [Product(), "product"]])
 
+
+
 root.mainloop()
