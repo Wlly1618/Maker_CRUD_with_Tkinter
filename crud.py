@@ -22,44 +22,37 @@ class CRUD:
         try:
             self.cursor.execute(query, data)
             self.connection.commit()
-            return 1
+
+            return self.cursor.lastrowid
+
         except sqlite3.Error as e:
             print(e)
-            return 0
+            return None
 
-    def read(self, column, header):
+    def read(self, column):
         """
         this function is used to read data in database
         :param column: table to read data
-        :param header: table values u want
         :return: values
         """
         try:
-            data = self.cursor.execute(f"select {header} from {column}")
-            data = data.fetchall()
-
-            return data
+            data = self.cursor.execute(f"select * from {column}")
+            return data.fetchall()
 
         except sqlite3.Error as e:
             print(e)
-            return False
+            return None
 
-    def read_with_id(self, id_, header, column):
+    def read_with_id(self, id_, column):
         """
         this function is used to read with id in database
         :param id_: the ID to search
-        :param header: table to read data
         :param column: table values u want
         :return: searched value, 1 _if can't find out, none if exists error
         """
         try:
-            data = self.cursor.execute(f"select {header} from {column} where id = {id_}")
-            data = data.fetchall()
-
-            if data:
-                return data
-            else:
-                return 1
+            data = self.cursor.execute(f"select * from {column} where id = {id_}")
+            return data.fetchone()
 
         except sqlite3.Error as e:
             print(e)
@@ -111,8 +104,8 @@ class CRUD:
             """
             CREATE TABLE IF NOT EXISTS product (
                 id INTEGER PRIMARY KEY,
-                price FLOAT,
                 name VARCHAR(50),
+                price FLOAT,
                 stock INTEGER
             )
             """

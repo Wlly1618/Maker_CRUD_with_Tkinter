@@ -1,76 +1,79 @@
+from crud import CRUD
+
+crud_instance = CRUD("db_test_2")
+
+
 class BaseEntity:
     def get_keys_str(self):
-        """
-        To get string with keys to class
-        :return: array to contains the keys
-        """
         return ', '.join(map(str, vars(self).keys()))
 
-    @property
-    def get_keys_without_id_str(self):
-        """
-        To get string with keys to class without the *_id*
-        :return:
-        """
-        keys = vars(self).keys()
-        keys_without_id = [key for key in keys if key != '_id']
-        return ', '.join(map(str, keys_without_id))
-
-    def get_values_str(self):
-        """
-        To get string with the
-        :return: array to contains the values
-        """
-        return ', '.join(map(str, vars(self).values()))
-
     def get_values_array(self):
-        """
-        To get values to class_
-        :return: class_ values
-        """
         return list(vars(self).values())
 
+    def get_keys_without_id_str(self):
+        data = self.get_keys_str()
+        data = data[4:]
+        return data
 
+    def get_keys_array(self):
+        return vars(self).keys()
+
+
+def model_methods(cls):
+    class DecoratedClass(cls):
+        @classmethod
+        def create(cls, **kwargs):
+            instance = cls(**kwargs)
+            column = cls.__name__.lower()
+            header = instance.get_keys_str()
+            data = instance.get_values_array()
+            result = crud_instance.create(column, header, data)
+
+            if result:
+                instance.set_id(result)
+                return instance
+            else:
+                return None
+
+        @classmethod
+        def get_by_id(cls, **kwargs):
+            instance = cls(**kwargs)
+            column = cls.__name__.lower()
+            data = crud_instance.read_with_id(instance.get_id(), column)
+            if data:
+                instance = cls(*data)
+                return instance
+            else:
+                return None
+
+        @classmethod
+        def get(cls):
+            instance = []
+            column = cls.__name__.lower()
+            data = crud_instance.read(column)
+
+            if data:
+                for item in data:
+                    instance.append(cls(*item))
+
+                return instance
+            else:
+                return None
+
+    DecoratedClass.__name__ = cls.__name__
+    return DecoratedClass
+
+
+@model_methods
 class Product(BaseEntity):
-    def __init__(self, _id=0, name="", price=0.0, stock=100):
-        self._id = _id
+    def __init__(self, _id=None, name="", price=0.0, stock=100):
+        self.id = _id
         self.name = name
         self.price = price
         self.stock = stock
 
-    @staticmethod
-    def columns_to_upd():
-        return "name, price, stock"
+    def get_id(self):
+        return self.id
 
-
-class Client(BaseEntity):
-    def __init__(self, _id=0, name=""):
-        self._id = _id
-        self.name = name
-
-    @staticmethod
-    def columns_to_upd():
-        return "name"
-
-
-class Shop(BaseEntity):
-    def __init__(self, _id=0, id_client="", date_time=""):
-        self._id = _id
-        self.id_client = id_client
-        self.date = date_time
-
-    @staticmethod
-    def columns_to_upd():
-        return ""
-
-
-class Detail(BaseEntity):
-    def __init__(self, _id=0, id_shop="", id_product="", amount=""):
-        self._id = _id
-        self.id_shop = id_shop
-        self.id_product = id_product
-        self.amount = amount
-
-    @staticmethod
-    def columns_to_upd():
-        return "id_product, amount"
+    def set_id(self, _id):
+        self.id = _id
