@@ -9,6 +9,15 @@ class CRUD:
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
 
+    def begin_transaction(self):
+        self.connection.execute("BEGIN TRANSACTION")
+
+    def commit_transaction(self):
+        self.connection.commit()
+
+    def rollback_transaction(self):
+        self.connection.rollback()
+
     def create(self, column, header, data):
         """
         this function is used to insert data in database
@@ -22,11 +31,11 @@ class CRUD:
         try:
             self.cursor.execute(query, data)
             self.connection.commit()
-
             return self.cursor.lastrowid
 
         except sqlite3.Error as e:
             print(e)
+            self.connection.rollback()
             return None
 
     def read(self, column):
@@ -41,6 +50,7 @@ class CRUD:
 
         except sqlite3.Error as e:
             print(e)
+            self.connection.rollback()
             return None
 
     def read_with_id(self, id_, column):
@@ -56,9 +66,10 @@ class CRUD:
 
         except sqlite3.Error as e:
             print(e)
+            self.connection.rollback()
             return None
 
-    def update_(self, column, header, id_, data):
+    def update(self, column, header, id_, data):
         """
         this function is used to update data in database
         :param column: table to update
@@ -75,12 +86,13 @@ class CRUD:
         try:
             self.cursor.execute(query, data)
             self.connection.commit()
-            return True
+            return self.cursor.lastrowid
         except sqlite3.Error as e:
             print(e)
-            return False
+            self.connection.rollback()
+            return None
 
-    def delete_(self, column, id_):
+    def delete(self, column, id_):
         """
         this function is used to delete data in database
         :param column: table to delete
@@ -94,7 +106,8 @@ class CRUD:
 
         except sqlite3.Error as e:
             print(e)
-            return False
+            self.connection.rollback()
+            return None
 
     def init_db(self):
         """
